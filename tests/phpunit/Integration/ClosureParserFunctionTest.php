@@ -71,12 +71,16 @@ class ClosureParserFunctionTest extends MediaWikiIntegrationTestCase {
 			->getMock();
 		$frame_mock->method( "expand" )->willReturn( $closure_name );
 
-		$closure_parser_function = new ClosureParserFunction( new ClosureStore() );
+		$closure_store = new ClosureStore();
+
+		$closure_parser_function = new ClosureParserFunction( $closure_store );
 
 		$this->assertSame(
 			wfmessage( "closures-bad-closure-name" )->parse(),
 			$closure_parser_function->handleFunctionHook( $parser_mock, $frame_mock, [ $closure_name ] )
 		);
+
+		$this->assertFalse( $closure_store->exists( $closure_name ) );
 	}
 
 	public function testHandleFunctionHookPipesAreConcatenated() {
