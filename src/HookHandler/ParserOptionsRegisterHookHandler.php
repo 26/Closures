@@ -44,16 +44,30 @@ class ParserOptionsRegisterHookHandler implements ParserOptionsRegisterHook {
 	private ClosureStore $closure_store;
 
 	/**
+	 * @var FetchTemplateHandler The FetchTemplateHandler object to register as the templateCallback
+	 *                           in the Parser
+	 */
+	private FetchTemplateHandler $fetch_template_handler;
+
+	/**
 	 * ParserOptionsRegisterHookHandler constructor.
 	 *
 	 * @param Parser $parser The Parser object to inject into the FetchTemplateHandler
 	 * @param ClosureStore $closure_store The ClosureStore object to inject into the FetchTemplateHandler
+	 * @param FetchTemplateHandler|null $fetch_template_handler The FetchTemplateHandler object to
+	 * register as the templateCallback in the Parser
 	 *
 	 * @since 1.0.0
 	 */
-	public function __construct( Parser $parser, ClosureStore $closure_store ) {
+	public function __construct(
+		Parser $parser,
+		ClosureStore $closure_store,
+		FetchTemplateHandler $fetch_template_handler = null
+	) {
 		$this->parser = $parser;
 		$this->closure_store = $closure_store;
+		$this->fetch_template_handler = $fetch_template_handler ??
+			new FetchTemplateHandler( $this->parser, $this->closure_store );
 	}
 
 	/**
@@ -67,11 +81,9 @@ class ParserOptionsRegisterHookHandler implements ParserOptionsRegisterHook {
 	 * @return void
 	 *
 	 * @since 1.0.0
+	 * @internal
 	 */
 	public function onParserOptionsRegister( &$defaults, &$inCacheKey, &$lazyLoad ): void {
-		$defaults["templateCallback"] = [
-			new FetchTemplateHandler( $this->parser, $this->closure_store ),
-			"handleFetchTemplate"
-		];
+		$defaults["templateCallback"] = [ $this->fetch_template_handler, "handleFetchTemplate" ];
 	}
 }

@@ -55,7 +55,7 @@ class ClosureParserFunctionTest extends MediaWikiUnitTestCase {
 
 		$closure_store_mock = $this->getMockBuilder( ClosureStore::class )->getMock();
 		$closure_store_mock->expects( $this->once() )
-			->method( "registerClosure" )
+			->method( "add" )
 			->with( $closure_name, $closure_body );
 
 		$parser_mock = $this->getMockBuilder( Parser::class )

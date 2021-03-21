@@ -61,18 +61,15 @@ class FetchTemplateHandler {
 	 *
 	 * @see Parser::statelessFetchTemplate()
 	 *
-	 * @param Title $title
+	 * @param Title $title The title to fetch the content of; this Title corresponds to the title between the brackets
 	 * @param Parser|false $parser
 	 * @return array|DeprecatablePropertyArray
 	 *
 	 * @since 1.0.0
+	 * @internal
 	 */
 	public function handleFetchTemplate( Title $title, $parser = false ) {
-		if ( $title->getNamespace() === NS_TEMPLATE ) {
-			$template_name = $title->getText();
-		} else {
-			$template_name = $title->getFullText();
-		}
+		$template_name = $title->getNamespace() === NS_TEMPLATE ? $title->getText() : $title->getFullText();
 
 		if ( !$this->closure_store->exists( $template_name ) ) {
 			// The closure does not exist, fallback to default template behaviour

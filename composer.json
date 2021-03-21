@@ -24,7 +24,7 @@
       "Closures\\": "src/"
     },
     "files" : [
-      "src/ClosuresServiceWiring.php"
+      "wiring/ClosuresServiceWiring.php"
     ]
   },
   "require-dev": {

@@ -60,11 +60,13 @@ class ParserFirstCallInitHookHandler implements ParserFirstCallInitHook {
 	 * @return void
 	 *
 	 * @since 1.0.0
+	 * @throws MWException
+	 * @internal
 	 */
 	final public function onParserFirstCallInit( $parser ): void {
-        $parser->setFunctionHook( "closure", [
-            new ClosureParserFunction( $this->closure_store ),
-            "handleFunctionHook"
-        ], SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( "closure", [
+			new ClosureParserFunction( $this->closure_store ),
+			"handleFunctionHook"
+		], SFH_OBJECT_ARGS );
 	}
 }

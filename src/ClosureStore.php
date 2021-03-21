@@ -49,9 +49,10 @@ class ClosureStore {
 	 *                       invalid the Title object constructed for it cannot represent
 	 *                       a page in the wiki's database)
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
+	 * @stable to call Since 1.1.0
 	 */
-	public function registerClosure( string $closure_name, string $closure_body ): void {
+	public function add( string $closure_name, string $closure_body ): void {
 		// Since template names are case-insensitive, make everything lower case
 		$closure_name = strtolower( $closure_name );
 
@@ -75,6 +76,7 @@ class ClosureStore {
 	 * @throws OutOfBoundsException When the given closure name does not exist
 	 *
 	 * @since 1.0.0
+	 * @stable to call Since 1.0.0
 	 */
 	public function get( string $closure_name ): string {
 		// Since template names are case-insensitive, make everything lower case
@@ -95,6 +97,7 @@ class ClosureStore {
 	 * @return bool True if and only if the given closure name exists
 	 *
 	 * @since 1.0.0
+	 * @stable to call Since 1.0.0
 	 */
 	public function exists( string $closure_name ): bool {
 		return isset( $this->closures[ strtolower( $closure_name ) ] );

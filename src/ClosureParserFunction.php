@@ -60,20 +60,20 @@ class ClosureParserFunction {
 	 * @return string
 	 *
 	 * @since 1.0.0
+	 * @internal
 	 */
 	public function handleFunctionHook( Parser &$parser, PPFrame $frame, array $args ): string {
 		if ( !isset( $args[0] ) || empty( $args[0] ) ) {
 			return wfMessage( "closures-missing-closure-name" )->parse();
 		}
 
+		$expand_original = fn ( $arg ) => $frame->expand( $arg, PPFrame::RECOVER_ORIG );
+
 		$closure_name = trim( $frame->expand( array_shift( $args ) ) );
-		$closure_body = implode(
-			"|",
-			array_map( fn( $arg ) => $frame->expand( $arg, PPFrame::RECOVER_ORIG ), $args )
-		);
+		$closure_body = implode( "|", array_map( $expand_original, $args ) );
 
 		try {
-			$this->closure_store->registerClosure( $closure_name, $closure_body );
+			$this->closure_store->add( $closure_name, $closure_body );
 		} catch ( BadTitleError $exception ) {
 			return wfMessage( "closures-bad-closure-name" )->parse();
 		}

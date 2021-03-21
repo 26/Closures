@@ -51,7 +51,7 @@ class ClosureStoreTest extends MediaWikiIntegrationTestCase {
 	 * @throws BadTitleError
 	 */
 	public function testRegisterValidClosureName( string $closure_name ) {
-		$this->closure_store->registerClosure( $closure_name, "" );
+		$this->closure_store->add( $closure_name, "" );
 		$this->assertTrue( $this->closure_store->exists( $closure_name ) );
 	}
 
@@ -62,7 +62,7 @@ class ClosureStoreTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testRegisterInvalidClosureName( string $closure_name ) {
 		$this->expectException( BadTitleError::class );
-		$this->closure_store->registerClosure( $closure_name, "" );
+		$this->closure_store->add( $closure_name, "" );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class ClosureStoreTest extends MediaWikiIntegrationTestCase {
 	 * @throws \BadTitleError
 	 */
 	public function testCaseIsIgnoredInClosureName( string $closure_name ) {
-		$this->closure_store->registerClosure( $closure_name, "Testing is a virtue" );
+		$this->closure_store->add( $closure_name, "Testing is a virtue" );
 
 		$closure_name_mutations = [
 			ucfirst( $closure_name ),

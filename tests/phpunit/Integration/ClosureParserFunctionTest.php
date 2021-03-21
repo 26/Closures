@@ -83,13 +83,16 @@ class ClosureParserFunctionTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $closure_store->exists( $closure_name ) );
 	}
 
-	public function testHandleFunctionHookPipesAreConcatenated() {
-		$expected_body = "{|-\n|-\n |} ";
-
+	/**
+	 * @dataProvider functionHookBodies
+	 * @param string $expected The expected body for the given args
+	 * @param array $args The given args, excluding the closure name
+	 */
+	public function testHandleFunctionHookPipesAreConcatenated( string $expected, array $args ) {
 		$closure_store_mock = $this->getMockBuilder( ClosureStore::class )->getMock();
 		$closure_store_mock->expects( $this->once() )
-			->method( "registerClosure" )
-			->with( "Foobar", $expected_body );
+			->method( "add" )
+			->with( "Foobar", $expected );
 
 		$parser = MediaWikiServices::getInstance()->getParser();
 		$user = \RequestContext::getMain()->getUser();
@@ -102,7 +105,7 @@ class ClosureParserFunctionTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			"",
 			$closure_parser_function->handleFunctionHook(
-				$parser, $frame, [ "Foobar", "{", "-\n", "-\n ", "} " ]
+				$parser, $frame, array_merge( [ "Foobar" ], $args )
 			)
 		);
 	}
@@ -127,6 +130,27 @@ class ClosureParserFunctionTest extends MediaWikiIntegrationTestCase {
 			[ "Template|Name" ],
 			[ "Template:|:Name" ],
 			[ "|:Template" ]
+		];
+	}
+
+	/**
+	 * Data provider that provides a function body and the
+	 * arguments used to create the function body.
+	 *
+	 * @return array[]
+	 */
+	public function functionHookBodies(): array {
+		return [
+			[ "{|-\n|-\n |} ", [ "{", "-\n", "-\n ", "} " ] ],
+			[ "\n", [ "\n" ] ],
+			[ "{{Foo|Bar}}", [ "{{Foo", "Bar}}" ] ],
+			[ " ", [ " " ] ],
+			[ "", [ "" ] ],
+			[ "", [] ],
+			[ "|", [ "", "" ] ],
+			[ "{{||}}", [ "{{", "", "}}" ] ],
+			[ "{{| | |}}|", [ "{{", " ", " ", "}}", "" ] ],
+			[ "||||", [ "", "", "", "", "" ] ]
 		];
 	}
 }
